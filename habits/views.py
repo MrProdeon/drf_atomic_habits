@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.generics import UpdateAPIView, CreateAPIView
+from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from habits.models import UsefulHabit, PleasantHabit, Place
 from rest_framework.response import Response
@@ -34,6 +34,14 @@ class CreatePleasantHabitAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class UsefulHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = UsefulHabit.objects.all()
+    serializer_class = UsefulHabitSerializer
+
+class PleasantHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = PleasantHabit.objects.all()
+    serializer_class = PleasantHabitSerializer
 
 class PlaceCreateAPIView(CreateAPIView):
     queryset = Place.objects.all()
