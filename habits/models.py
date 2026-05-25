@@ -29,7 +29,7 @@ class PleasantHabit(models.Model):
                              related_name="pleasant_habits")
     place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="pleasant_habits_at_this_place")
-    time_for_habit = models.DateTimeField(verbose_name="Время для выполнения привычки")
+    time_for_habit = models.TimeField(verbose_name="Время для выполнения привычки")
     action = models.CharField(max_length=250, verbose_name="Действие")
     periodicity = models.PositiveIntegerField(verbose_name="Переодичность выполнения для напоминания в днях",
                                               validators=[
@@ -57,7 +57,7 @@ class UsefulHabit(models.Model):
                              related_name="userful_habits")
     place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="userful_habits_at_this_place")
-    time_for_habit = models.DateTimeField(verbose_name="Время для выполнения привычки")
+    time_for_habit = models.TimeField(verbose_name="Время для выполнения привычки")
     action = models.CharField(max_length=250, verbose_name="Действие")
     periodicity = models.PositiveIntegerField(verbose_name="Переодичность выполнения для напоминания в днях",
                                               validators=[
@@ -76,14 +76,6 @@ class UsefulHabit(models.Model):
                                         MaxValueValidator(120, "Время выполнения не может быть больше 120 секунды")
                                     ])
     is_public = models.BooleanField(verbose_name="Признак публичности")
-
-    def clean(self):
-        if self.text_reward and self.pleasant_habit_reward:
-            raise ValidationError(
-                "Для заполнения допускается ЛИБО text_reward, ЛИБО pleasant_habit_reward. Одновременное заполнение запрещено.")
-        if not self.text_reward and not self.pleasant_habit_reward:
-            raise ValidationError(
-                "Необходимо заполнить либо поле text_reward, либо pleasant_habit_reward.")
 
     def save(self, *args, **kwargs):
         self.clean()
