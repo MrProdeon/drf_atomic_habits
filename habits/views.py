@@ -58,3 +58,7 @@ class PleasantHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class PlaceCreateAPIView(CreateAPIView):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
+
+class PlaceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Place.objects.all()
+    serializer_class = PlaceSerializer
