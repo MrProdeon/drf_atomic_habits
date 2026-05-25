@@ -27,7 +27,7 @@ class PleasantHabit(models.Model):
     """
     user = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Создатель привычки",
                              related_name="pleasant_habits")
-    place = models.ForeignKey(to=Place, on_delete=SET_NULL, verbose_name="Место выполнения привычки",
+    place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="pleasant_habits_at_this_place")
     time_for_habit = models.DateTimeField(verbose_name="Время для выполнения привычки")
     action = models.CharField(max_length=250, verbose_name="Действие")
@@ -55,7 +55,7 @@ class UsefulHabit(models.Model):
     """
     user = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Создатель привычки",
                              related_name="userful_habits")
-    place = models.ForeignKey(to=Place, on_delete=SET_NULL, verbose_name="Место выполнения привычки",
+    place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="userful_habits_at_this_place")
     time_for_habit = models.DateTimeField(verbose_name="Время для выполнения привычки")
     action = models.CharField(max_length=250, verbose_name="Действие")
@@ -67,7 +67,7 @@ class UsefulHabit(models.Model):
                                                                     message="Привычку можно выполнять не реже, чем раз в 7 дней")
                                               ])
     text_reward = models.CharField(max_length=250, null=True, blank=True, verbose_name="Вознаграждение")
-    pleasant_habit_reward = models.ForeignKey(to=PleasantHabit, verbose_name="Приятная привычка в награду", null=True,
+    pleasant_habit_reward = models.ForeignKey(to=PleasantHabit, on_delete=SET_NULL, verbose_name="Приятная привычка в награду", null=True,
                                               blank=True,
                                               related_name="related_userful_habits")
     lead_time = models.IntegerField(verbose_name="Время выполнения в секундах",
