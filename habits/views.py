@@ -1,7 +1,11 @@
 from django.shortcuts import render
+from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.views import APIView
-from habits.models import UsefulHabit, PleasantHabit
+from habits.models import UsefulHabit, PleasantHabit, Place
 from rest_framework.response import Response
+
+from habits.serializer import UsefulHabitSerializer, PleasantHabitSerializer, PlaceSerializer
+
 
 # Create your views here.
 class UserHabitsAPIView(APIView):
@@ -16,3 +20,21 @@ class UserHabitsAPIView(APIView):
             "pleasant_habits": PleasantHabitSerializer(pleasant_habits, many=True).data
         }
         return Response(data)
+
+class CreateUsefulHabitAPIView(CreateAPIView):
+    queryset = UsefulHabit.objects.all()
+    serializer_class = UsefulHabitSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CreatePleasantHabitAPIView(CreateAPIView):
+    queryset = PleasantHabit.objects.all()
+    serializer_class = PleasantHabitSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class PlaceCreateAPIView(CreateAPIView):
+    queryset = Place.objects.all()
+    serializer_class = PlaceSerializer
