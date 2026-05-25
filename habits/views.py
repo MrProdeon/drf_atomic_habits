@@ -21,6 +21,18 @@ class UserHabitsAPIView(APIView):
         }
         return Response(data)
 
+class PublicHabitsAPIView(APIView):
+
+    def get(self, request):
+        useful_habits = UsefulHabit.objects.filter(is_public=True)
+        pleasant_habits = PleasantHabit.objects.filter(is_public=True)
+
+        data = {
+            "public_useful_habits": UsefulHabitSerializer(useful_habits, many=True).data,
+            "public_pleasant_habits": PleasantHabitSerializer(pleasant_habits, many=True).data
+        }
+        return Response(data)
+
 class CreateUsefulHabitAPIView(CreateAPIView):
     queryset = UsefulHabit.objects.all()
     serializer_class = UsefulHabitSerializer
