@@ -10,6 +10,6 @@ app_name = UsersConfig.name
 urlpatterns = [
     path("register/", UserCreateAPIVew.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(), name="login"),
-    path("login/", TokenRefreshView.as_view(), name="refresh-token")
+    path("refresh_token/", TokenRefreshView.as_view(), name="refresh-token")
 
 ]
