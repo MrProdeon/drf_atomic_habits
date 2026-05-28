@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from habits.models import UsefulHabit, PleasantHabit, Place
 from rest_framework.response import Response
 
+from habits.permissions import IsUserOwner
 from habits.serializer import UsefulHabitSerializer, PleasantHabitSerializer, PlaceSerializer
 from habits.paginators import MyPageNumberPagination
 
@@ -61,11 +63,13 @@ class CreatePleasantHabitAPIView(CreateAPIView):
 class UsefulHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = UsefulHabit.objects.all()
     serializer_class = UsefulHabitSerializer
+    permission_classes = [IsAuthenticated, IsUserOwner]
 
 
 class PleasantHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = PleasantHabit.objects.all()
     serializer_class = PleasantHabitSerializer
+    permission_classes = [IsAuthenticated, IsUserOwner]
 
 
 class PlaceCreateAPIView(CreateAPIView):
