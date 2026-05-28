@@ -84,6 +84,14 @@ class PlaceCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+class PlaceListAPIView(ListAPIView):
+    queryset = Place.objects.all()
+    serializer_class = PlaceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Place.objects.filter(owner=self.request.user)
+
 class PlaceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
