@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from users.apps import UsersConfig
+from habits.apps import HabitsConfig
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include("users.urls", namespace=UsersConfig.name)),
+    path("", include("habits.urls", namespace=HabitsConfig.name)),
+
 
 ]
