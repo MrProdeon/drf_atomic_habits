@@ -15,6 +15,7 @@ from habits.paginators import MyPageNumberPagination
 class UserUsefulHabitsAPIView(ListAPIView):
     pagination_class = MyPageNumberPagination
     serializer_class = UsefulHabitSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return UsefulHabit.objects.filter(user=self.request.user)
@@ -23,6 +24,7 @@ class UserUsefulHabitsAPIView(ListAPIView):
 class UserPleasantsAPIView(ListAPIView):
     pagination_class = MyPageNumberPagination
     serializer_class = PleasantHabitSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return PleasantHabit.objects.filter(user=self.request.user)
@@ -47,6 +49,7 @@ class PublicPleasantHabits(ListAPIView):
 class CreateUsefulHabitAPIView(CreateAPIView):
     queryset = UsefulHabit.objects.all()
     serializer_class = UsefulHabitSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -55,6 +58,7 @@ class CreateUsefulHabitAPIView(CreateAPIView):
 class CreatePleasantHabitAPIView(CreateAPIView):
     queryset = PleasantHabit.objects.all()
     serializer_class = PleasantHabitSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -75,8 +79,12 @@ class PleasantHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class PlaceCreateAPIView(CreateAPIView):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
+    permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class PlaceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
+    permission_classes = [IsAuthenticated, IsUserOwner]
