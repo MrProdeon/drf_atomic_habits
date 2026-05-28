@@ -12,6 +12,8 @@ class Place(models.Model):
     Модель места выполнения привычки
     """
     name = models.CharField(max_length=250, verbose_name="Место выполнения привычки", null=False, blank=False)
+    owner = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Создатель места",
+                             related_name="places")
 
     class Meta:
         verbose_name = 'Место выполнения привычки'
