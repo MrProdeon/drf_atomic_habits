@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.urls import path
 
 from habits.apps import HabitsConfig
-from habits.views import UserUsefulHabitsAPIView, UserPleasantsAPIView, CreateUsefulHabitAPIView, CreatePleasantHabitAPIView, PlaceCreateAPIView, \
-    UsefulHabitRetrieveUpdateDestroyAPIView, PleasantHabitRetrieveUpdateDestroyAPIView, PublicHabitsAPIView, \
+from habits.views import UserUsefulHabitsAPIView, UserPleasantsAPIView, CreateUsefulHabitAPIView, \
+    CreatePleasantHabitAPIView, PlaceCreateAPIView, \
+    UsefulHabitRetrieveUpdateDestroyAPIView, PleasantHabitRetrieveUpdateDestroyAPIView, \
     PlaceRetrieveUpdateDestroyAPIView, PublicUsefulHabits, PublicPleasantHabits
 
 app_name = HabitsConfig.name
