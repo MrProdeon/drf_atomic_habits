@@ -43,5 +43,6 @@ class PleasantHabitSerializer(ModelSerializer):
 
 class PlaceSerializer(ModelSerializer):
     class Meta:
+        read_only_fields = ["owner"]
         model = Place
         fields = "__all__"
