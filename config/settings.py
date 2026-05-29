@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "users",
-    "habits"
+    "habits",
+    "django_celery_beat"
 
 ]
 
@@ -144,5 +145,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'habits.tasks.habit_reminder',
+        'schedule': timedelta(minutes=1),
+    },
 }
 
