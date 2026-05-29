@@ -13,6 +13,7 @@ from habits.paginators import MyPageNumberPagination
 
 # Create your views here.
 class UserUsefulHabitsAPIView(ListAPIView):
+    """Получение списка полезных привычек для пользователя, делающего запрос"""
     pagination_class = MyPageNumberPagination
     serializer_class = UsefulHabitSerializer
     permission_classes = [IsAuthenticated]
@@ -22,6 +23,7 @@ class UserUsefulHabitsAPIView(ListAPIView):
 
 
 class UserPleasantsAPIView(ListAPIView):
+    """Получение списка приятных привычек для пользователя, делающего запрос"""
     pagination_class = MyPageNumberPagination
     serializer_class = PleasantHabitSerializer
     permission_classes = [IsAuthenticated]
@@ -31,6 +33,7 @@ class UserPleasantsAPIView(ListAPIView):
 
 
 class PublicUsefulHabits(ListAPIView):
+    """Получение списка публичных полезных привычек"""
     serializer_class = UsefulHabitSerializer
     pagination_class = MyPageNumberPagination
 
@@ -39,6 +42,7 @@ class PublicUsefulHabits(ListAPIView):
 
 
 class PublicPleasantHabits(ListAPIView):
+    """Получение списка публичных приятных привычек"""
     serializer_class = PleasantHabitSerializer
     pagination_class = MyPageNumberPagination
 
@@ -47,6 +51,7 @@ class PublicPleasantHabits(ListAPIView):
 
 
 class CreateUsefulHabitAPIView(CreateAPIView):
+    """Создание полезной привычки"""
     queryset = UsefulHabit.objects.all()
     serializer_class = UsefulHabitSerializer
     permission_classes = [IsAuthenticated]
@@ -56,6 +61,7 @@ class CreateUsefulHabitAPIView(CreateAPIView):
 
 
 class CreatePleasantHabitAPIView(CreateAPIView):
+    """Создание приятной привычки"""
     queryset = PleasantHabit.objects.all()
     serializer_class = PleasantHabitSerializer
     permission_classes = [IsAuthenticated]
@@ -65,18 +71,23 @@ class CreatePleasantHabitAPIView(CreateAPIView):
 
 
 class UsefulHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """Детальный просмотр, редактирование и удаление полезной привычки.
+    Действие определяется в зависимости от метода запроса."""
     queryset = UsefulHabit.objects.all()
     serializer_class = UsefulHabitSerializer
     permission_classes = [IsAuthenticated, IsUserOwner]
 
 
 class PleasantHabitRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """Детальный просмотр, редактирование и удаление приятной привычки.
+    Действие определяется в зависимости от метода запроса."""
     queryset = PleasantHabit.objects.all()
     serializer_class = PleasantHabitSerializer
     permission_classes = [IsAuthenticated, IsUserOwner]
 
 
 class PlaceCreateAPIView(CreateAPIView):
+    """Создание места для выполнения привычки"""
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
     permission_classes = [IsAuthenticated]
@@ -85,6 +96,7 @@ class PlaceCreateAPIView(CreateAPIView):
         serializer.save(owner=self.request.user)
 
 class PlaceListAPIView(ListAPIView):
+    """Получение мест для выполнения привычки. Вернет места того пользователя, который их запрашивает."""
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
     permission_classes = [IsAuthenticated]
@@ -93,6 +105,8 @@ class PlaceListAPIView(ListAPIView):
         return Place.objects.filter(owner=self.request.user)
 
 class PlaceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """Детальный просмотр, редактирование и удаление места для выполнения привычки.
+    Действие определяется в зависимости от метода запроса."""
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
     permission_classes = [IsAuthenticated, IsUserOwner]
