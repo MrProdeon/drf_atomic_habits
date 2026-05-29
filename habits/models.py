@@ -1,7 +1,10 @@
+from datetime import timedelta
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import CASCADE, SET_NULL
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from users.models import CustomUser
 
@@ -60,6 +63,8 @@ class UsefulHabit(models.Model):
     place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="userful_habits_at_this_place")
     time_for_habit = models.TimeField(verbose_name="Время для выполнения привычки")
+    last_notification = models.DateTimeField(verbose_name="Дата последнего напоминания", default=timezone.now)
+    next_notification = models.DateTimeField(verbose_name="Дата следующего напоминания", null=True, blank=True)
     action = models.CharField(max_length=250, verbose_name="Действие")
     periodicity = models.PositiveIntegerField(verbose_name="Переодичность выполнения для напоминания в днях",
                                               validators=[
@@ -80,5 +85,42 @@ class UsefulHabit(models.Model):
     is_public = models.BooleanField(verbose_name="Признак публичности")
 
     def save(self, *args, **kwargs):
+        if self.next_notification is None:
+            self.calculate_next_notification()
+
         self.clean()
         super().save(*args, **kwargs)
+
+    def calculate_next_notification(self):
+        now = timezone.now()
+
+        if self.last_notification:
+            base_date = self.last_notification
+        else:
+            base_date = now
+
+        notification_hour = self.time_for_habit.hour
+        notification_minute = self.time_for_habit.minute - 5
+
+        if notification_minute < 0:
+            notification_minute += 60
+            notification_hour -= 1
+            if notification_hour < 0:
+                notification_hour += 24
+
+        next_date = base_date.replace(
+            hour=notification_hour,
+            minute=notification_minute,
+            second=0,
+            microsecond=0
+        )
+
+        while next_date <= now:
+            next_date += timedelta(days=self.periodicity)
+
+        self.next_notification = next_date
+
+    def update_after_notification(self):
+        self.last_notification = timezone.now()
+        self.calculate_next_notification()
+        self.save()
