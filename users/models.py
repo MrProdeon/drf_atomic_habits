@@ -11,6 +11,8 @@ class CustomUserManager(BaseUserManager):
 
 # Create your models here.
 class CustomUser(AbstractUser):
+    tg_chat_id = models.CharField(max_length=10, verbose_name="id телеграм чата")
+
     objects = CustomUserManager()
     def __str__(self):
         return self.username
