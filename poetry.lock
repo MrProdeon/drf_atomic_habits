@@ -388,6 +388,22 @@ python-crontab = ">=2.3.4"
 tzdata = "*"
 
 [[package]]
+name = "django-cors-headers"
+version = "4.9.0"
+description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "django_cors_headers-4.9.0-py3-none-any.whl", hash = "sha256:15c7f20727f90044dcee2216a9fd7303741a864865f0c3657e28b7056f61b449"},
+    {file = "django_cors_headers-4.9.0.tar.gz", hash = "sha256:fe5d7cb59fdc2c8c646ce84b727ac2bca8912a247e6e68e1fb507372178e59e8"},
+]
+
+[package.dependencies]
+asgiref = ">=3.6"
+django = ">=4.2"
+
+[[package]]
 name = "django-timezone-field"
 version = "7.2.1"
 description = "A Django app providing DB, form, and REST framework fields for zoneinfo and pytz timezone objects."
@@ -784,4 +800,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "9ae78608db9a06befe3d2bd4a0eab7485d5d0387e3e1e7fdb3772e410e6b6b89"
+content-hash = "0c9e5b3ec319539c2ec5b56f7562df2738512122166e7723dee7ae4b0bb3cda9"
