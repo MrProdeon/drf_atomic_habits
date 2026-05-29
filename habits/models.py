@@ -35,6 +35,8 @@ class PleasantHabit(models.Model):
     place = models.ForeignKey(to=Place, on_delete=CASCADE, verbose_name="Место выполнения привычки",
                               related_name="pleasant_habits_at_this_place")
     time_for_habit = models.TimeField(verbose_name="Время для выполнения привычки")
+    last_notification = models.DateTimeField(verbose_name="Дата последнего напоминания", default=timezone.now)
+    next_notification = models.DateTimeField(verbose_name="Дата следующего напоминания", null=True, blank=True)
     action = models.CharField(max_length=250, verbose_name="Действие")
     periodicity = models.PositiveIntegerField(verbose_name="Переодичность выполнения для напоминания в днях",
                                               validators=[
