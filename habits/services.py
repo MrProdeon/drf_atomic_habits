@@ -12,3 +12,16 @@ def send_message_in_telegram(chat_id : str, message_text : str) -> None:
         "text" : message_text
     }
     response = requests.post(send_message_url, data=payload)
+
+def send_notifications(habits_to_notify):
+    for habit in habits_to_notify:
+        if habit.user.tg_chat_id:
+            try:
+                message_text = f"Напоминание о привычке\nДействие - {habit.action}\nМесто - {habit.place.name}\nВремя - {habit.time_for_habit}"
+                send_message_in_telegram(chat_id=habit.user.tg_chat_id,
+                                         message_text=message_text)
+                habit.update_after_notification()
+            except Exception as e:
+                print(f"Ошибка {e} во время отправки напоминания для привычки {habit.id}")
+        else:
+            continue
