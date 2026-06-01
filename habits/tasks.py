@@ -16,7 +16,7 @@ def useful_habit_reminder():
     habits_to_notify = UsefulHabit.objects.filter(
         next_notification__isnull=False,
         next_notification__lte=notification_time,
-        next_notification__gte=now - timedelta(5)
+        next_notification__gte=now - timedelta(minutes=5)
     )
 
     send_notifications(habits_to_notify)
@@ -29,7 +29,7 @@ def pleasant_habit_reminder():
     habits_to_notify = PleasantHabit.objects.filter(
         next_notification__isnull=False,
         next_notification__lte=notification_time,
-        next_notification__gte=now - timedelta(5)
+        next_notification__gte=now - timedelta(minutes=5)
     )
 
     send_notifications(habits_to_notify)
