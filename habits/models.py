@@ -1,4 +1,4 @@
-from datetime import timedelta
+
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from users.models import CustomUser
+from datetime import datetime, timedelta
 
 
 # Create your models here.
@@ -16,7 +17,7 @@ class Place(models.Model):
     """
     name = models.CharField(max_length=250, verbose_name="Место выполнения привычки", null=False, blank=False)
     owner = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Создатель места",
-                             related_name="places")
+                              related_name="places")
 
     class Meta:
         verbose_name = 'Место выполнения привычки'
@@ -55,6 +56,33 @@ class PleasantHabit(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.next_notification is None:
+            self.calculate_next_notification()
+
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def calculate_next_notification(self):
+        notify_time = self.time_for_habit
+
+        base_date = self.last_notification.date()
+
+        next_date = datetime.combine(
+            base_date,
+            notify_time
+        ) - timedelta(minutes=5)
+
+        while next_date <= timezone.now():
+            next_date += timedelta(days=self.periodicity)
+
+        self.next_notification = next_date
+
+    def update_after_notification(self):
+        self.last_notification = timezone.now()
+        self.calculate_next_notification()
+        self.save()
+
 
 class UsefulHabit(models.Model):
     """
@@ -76,7 +104,8 @@ class UsefulHabit(models.Model):
                                                                     message="Привычку можно выполнять не реже, чем раз в 7 дней")
                                               ])
     text_reward = models.CharField(max_length=250, null=True, blank=True, verbose_name="Вознаграждение")
-    pleasant_habit_reward = models.ForeignKey(to=PleasantHabit, on_delete=SET_NULL, verbose_name="Приятная привычка в награду", null=True,
+    pleasant_habit_reward = models.ForeignKey(to=PleasantHabit, on_delete=SET_NULL,
+                                              verbose_name="Приятная привычка в награду", null=True,
                                               blank=True,
                                               related_name="related_userful_habits")
     lead_time = models.IntegerField(verbose_name="Время выполнения в секундах",
@@ -94,30 +123,16 @@ class UsefulHabit(models.Model):
         super().save(*args, **kwargs)
 
     def calculate_next_notification(self):
-        now = timezone.now()
+        notify_time = self.time_for_habit
 
-        if self.last_notification:
-            base_date = self.last_notification
-        else:
-            base_date = now
+        base_date = self.last_notification.date()
 
-        notification_hour = self.time_for_habit.hour
-        notification_minute = self.time_for_habit.minute - 5
+        next_date = datetime.combine(
+            base_date,
+            notify_time
+        ) - timedelta(minutes=5)
 
-        if notification_minute < 0:
-            notification_minute += 60
-            notification_hour -= 1
-            if notification_hour < 0:
-                notification_hour += 24
-
-        next_date = base_date.replace(
-            hour=notification_hour,
-            minute=notification_minute,
-            second=0,
-            microsecond=0
-        )
-
-        while next_date <= now:
+        while next_date <= timezone.now():
             next_date += timedelta(days=self.periodicity)
 
         self.next_notification = next_date
