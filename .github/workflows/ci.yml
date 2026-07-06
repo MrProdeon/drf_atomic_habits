@@ -161,6 +161,8 @@ jobs:
             
             git clone -b main https://github.com/MrProdeon/drf_atomic_habits.git
             
+            cd drf_atomic_habits
+            
             cat > .env << 'EOF'
                         SECRET_KEY=${{ secrets.SECRET_KEY }}
                         DEBUG=False
@@ -177,7 +179,6 @@ jobs:
                         REDIS_PORT=6379
                         EOF
             
-            cd drf_atomic_habits
             
             docker-compose down -v
             sudo rm -rf postgres_data
