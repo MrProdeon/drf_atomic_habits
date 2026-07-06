@@ -117,3 +117,20 @@ jobs:
           black .
           isort .
           flake8 .
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }} ${{ secrets.DOCKER_LOGIN }}/myapp:latest
+          docker push ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_LOGIN }}/atobic_habits:latest
