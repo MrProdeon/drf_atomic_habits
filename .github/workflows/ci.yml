@@ -147,21 +147,22 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-
+            
             if ! command -v docker compose &> /dev/null; then
               sudo apt update
               sudo apt install docker-compose-plugin -y
             fi
 
+            
+            docker stop $(docker ps -aq) 2>/dev/null || true
+            docker rm $(docker ps -aq) 2>/dev/null || true
 
+            
             cd /home/prodeon
-
-
             sudo rm -rf drf_atomic_habits
-            
             git clone -b main https://github.com/MrProdeon/drf_atomic_habits.git
-            
             cd drf_atomic_habits
+
             
             cat > .env << 'EOF'
             SECRET_KEY=${{ secrets.SECRET_KEY }}
@@ -178,16 +179,16 @@ jobs:
             REDIS_HOST=redis
             REDIS_PORT=6379
             EOF
+
             
-            
-            docker-compose down -v
+            docker compose down -v 2>/dev/null || true
             sudo rm -rf postgres_data
             docker volume rm drf_atomic_habits_postgres_data 2>/dev/null || true
             docker volume rm drf_atomic_habits_redis_data 2>/dev/null || true
 
-
             docker compose pull
             docker compose up -d
 
-
+            
             docker compose ps
+            docker compose logs --tail=20
