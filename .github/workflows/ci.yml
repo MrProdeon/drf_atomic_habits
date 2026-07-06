@@ -164,20 +164,20 @@ jobs:
             cd drf_atomic_habits
             
             cat > .env << 'EOF'
-                        SECRET_KEY=${{ secrets.SECRET_KEY }}
-                        DEBUG=False
-                        ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
-                        DB_NAME=${{ secrets.DB_NAME }}
-                        DB_USER=${{ secrets.DB_USER }}
-                        DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-                        DB_HOST=db
-                        DB_PORT=5432
-                        POSTGRES_DB=${{ secrets.DB_NAME }}
-                        POSTGRES_USER=${{ secrets.DB_USER }}
-                        POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
-                        REDIS_HOST=redis
-                        REDIS_PORT=6379
-                        EOF
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            DEBUG=False
+            ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_HOST=db
+            DB_PORT=5432
+            POSTGRES_DB=${{ secrets.DB_NAME }}
+            POSTGRES_USER=${{ secrets.DB_USER }}
+            POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
+            REDIS_HOST=redis
+            REDIS_PORT=6379
+            EOF
             
             
             docker-compose down -v
