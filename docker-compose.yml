@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   drf_atomic_habits:
-    image: prodeon/drf_atomic_habits:latest
+    image: prodeon/atomic_habits:latest
     command: sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"
     env_file:
       - ./.env
@@ -40,7 +40,7 @@ services:
     restart: unless-stopped
 
   celery:
-    image: prodeon/drf_atomic_habits:latest
+    image: prodeon/atomic_habits:latest
     command: celery -A config worker -l INFO
     env_file:
       - ./.env
@@ -55,7 +55,7 @@ services:
     restart: unless-stopped
 
   celery_beat:
-    image: prodeon/drf_atomic_habits:latest
+    image: prodeon/atomic_habits:latest
     command: celery -A config beat -l INFO
     env_file:
       - ./.env
