@@ -130,7 +130,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }} .
-          docker tag ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }} ${{ secrets.DOCKER_LOGIN }}/myapp:latest
-          docker push ${{ secrets.DOCKER_LOGIN }}/atobic_habits:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_LOGIN }}/atobic_habits:latest
+          docker build -t ${{ secrets.DOCKER_LOGIN }}/atomic_habits:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_LOGIN }}/atomic_habits:${{ github.sha }} ${{ secrets.DOCKER_LOGIN }}/atomic_habits:latest
+          docker push ${{ secrets.DOCKER_LOGIN }}/atomic_habits:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_LOGIN }}/atomic_habits:latest
