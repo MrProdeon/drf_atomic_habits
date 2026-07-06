@@ -159,7 +159,7 @@ jobs:
 
             sudo rm -rf drf_atomic_habits
             
-            git clone -b develop https://github.com/MrProdeon/drf_atomic_habits.git
+            git clone -b main https://github.com/MrProdeon/drf_atomic_habits.git
             
             cat > .env << 'EOF'
                         SECRET_KEY=${{ secrets.SECRET_KEY }}
