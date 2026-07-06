@@ -1,17 +1,21 @@
+from datetime import time, timedelta
+
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from habits.models import Place, PleasantHabit, UsefulHabit
 from users.models import CustomUser
-from habits.models import Place, UsefulHabit, PleasantHabit
-from datetime import time, timedelta
-from django.utils import timezone
 
 
 # Create your tests here.
 class CreateHabitsTestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.client.force_authenticate(user=self.user)
 
         self.place = Place.objects.create(name="test_place", owner=self.user)
@@ -24,7 +28,7 @@ class CreateHabitsTestCase(APITestCase):
             "lead_time": 100,
             "is_public": True,
             "place": self.place.id,
-            "text_reward": "test reward"
+            "text_reward": "test reward",
         }
 
         self.pleasant_url = reverse("habits:create-pleasant-habit")
@@ -56,7 +60,9 @@ class CreateHabitsTestCase(APITestCase):
 class ActionsOnHabits(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.client.force_authenticate(user=self.user)
 
         self.place = Place.objects.create(name="test_place", owner=self.user)
@@ -69,7 +75,7 @@ class ActionsOnHabits(APITestCase):
             periodicity=1,
             lead_time=100,
             is_public=True,
-            text_reward="test reward"
+            text_reward="test reward",
         )
         self.pleasant_habit = PleasantHabit.objects.create(
             user=self.user,
@@ -78,11 +84,15 @@ class ActionsOnHabits(APITestCase):
             action="pleasant action",
             periodicity=1,
             lead_time=100,
-            is_public=False
+            is_public=False,
         )
 
-        self.useful_url = reverse("habits:useful-habit", kwargs={"pk": self.useful_habit.id})
-        self.pleasant_url = reverse("habits:pleasant-habit", kwargs={"pk": self.pleasant_habit.id})
+        self.useful_url = reverse(
+            "habits:useful-habit", kwargs={"pk": self.useful_habit.id}
+        )
+        self.pleasant_url = reverse(
+            "habits:pleasant-habit", kwargs={"pk": self.pleasant_habit.id}
+        )
 
     def test_get(self):
         useful_response = self.client.get(self.useful_url)
@@ -96,11 +106,15 @@ class ActionsOnHabits(APITestCase):
         self.assertEqual(parse_pleasant_response["action"], "pleasant action")
 
     def test_put(self):
-        useful_response = self.client.patch(self.useful_url, data={"action": "test_patch_action"})
+        useful_response = self.client.patch(
+            self.useful_url, data={"action": "test_patch_action"}
+        )
         self.assertEqual(useful_response.status_code, status.HTTP_200_OK)
         self.assertEqual(useful_response.json()["action"], "test_patch_action")
 
-        pleasant_response = self.client.patch(self.pleasant_url, data={"action": "pleasant_patch"})
+        pleasant_response = self.client.patch(
+            self.pleasant_url, data={"action": "pleasant_patch"}
+        )
         self.assertEqual(pleasant_response.status_code, status.HTTP_200_OK)
         self.assertEqual(pleasant_response.json()["action"], "pleasant_patch")
 
@@ -115,7 +129,9 @@ class ActionsOnHabits(APITestCase):
 class UserHabitsListTestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.client.force_authenticate(user=self.user)
 
         self.place = Place.objects.create(name="test_place", owner=self.user)
@@ -128,7 +144,7 @@ class UserHabitsListTestCase(APITestCase):
             periodicity=1,
             lead_time=100,
             is_public=True,
-            text_reward="reward 1"
+            text_reward="reward 1",
         )
         self.useful_habit_2 = UsefulHabit.objects.create(
             user=self.user,
@@ -138,7 +154,7 @@ class UserHabitsListTestCase(APITestCase):
             periodicity=2,
             lead_time=60,
             is_public=False,
-            text_reward="reward 2"
+            text_reward="reward 2",
         )
 
         self.pleasant_habit_1 = PleasantHabit.objects.create(
@@ -148,7 +164,7 @@ class UserHabitsListTestCase(APITestCase):
             action="pleasant action 1",
             periodicity=1,
             lead_time=120,
-            is_public=True
+            is_public=True,
         )
         self.pleasant_habit_2 = PleasantHabit.objects.create(
             user=self.user,
@@ -157,11 +173,15 @@ class UserHabitsListTestCase(APITestCase):
             action="pleasant action 2",
             periodicity=3,
             lead_time=90,
-            is_public=False
+            is_public=False,
         )
 
-        self.other_user = CustomUser.objects.create_user(username="otheruser", password="otherpassword")
-        self.other_place = Place.objects.create(name="other_place", owner=self.other_user)
+        self.other_user = CustomUser.objects.create_user(
+            username="otheruser", password="otherpassword"
+        )
+        self.other_place = Place.objects.create(
+            name="other_place", owner=self.other_user
+        )
         UsefulHabit.objects.create(
             user=self.other_user,
             place=self.other_place,
@@ -170,7 +190,7 @@ class UserHabitsListTestCase(APITestCase):
             periodicity=1,
             lead_time=50,
             is_public=True,
-            text_reward="other reward"
+            text_reward="other reward",
         )
 
         self.useful_url = reverse("habits:user-useful-habits")
@@ -181,8 +201,8 @@ class UserHabitsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        if 'results' in response_data:
-            results = response_data['results']
+        if "results" in response_data:
+            results = response_data["results"]
         else:
             results = response_data
 
@@ -196,8 +216,8 @@ class UserHabitsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        if 'results' in response_data:
-            results = response_data['results']
+        if "results" in response_data:
+            results = response_data["results"]
         else:
             results = response_data
 
@@ -210,8 +230,12 @@ class UserHabitsListTestCase(APITestCase):
 class PublicHabitsListTestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
-        self.user2 = CustomUser.objects.create_user(username="testuser2", password="testpassword2")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.user2 = CustomUser.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
         self.client.force_authenticate(user=self.user)
 
         self.place = Place.objects.create(name="test_place", owner=self.user)
@@ -225,7 +249,7 @@ class PublicHabitsListTestCase(APITestCase):
             periodicity=1,
             lead_time=100,
             is_public=True,
-            text_reward="reward 1"
+            text_reward="reward 1",
         )
         self.public_useful_2 = UsefulHabit.objects.create(
             user=self.user2,
@@ -235,7 +259,7 @@ class PublicHabitsListTestCase(APITestCase):
             periodicity=2,
             lead_time=60,
             is_public=True,
-            text_reward="reward 2"
+            text_reward="reward 2",
         )
 
         UsefulHabit.objects.create(
@@ -246,7 +270,7 @@ class PublicHabitsListTestCase(APITestCase):
             periodicity=1,
             lead_time=80,
             is_public=False,
-            text_reward="private reward"
+            text_reward="private reward",
         )
 
         self.public_pleasant_1 = PleasantHabit.objects.create(
@@ -256,7 +280,7 @@ class PublicHabitsListTestCase(APITestCase):
             action="public pleasant 1",
             periodicity=1,
             lead_time=120,
-            is_public=True
+            is_public=True,
         )
         self.public_pleasant_2 = PleasantHabit.objects.create(
             user=self.user2,
@@ -265,7 +289,7 @@ class PublicHabitsListTestCase(APITestCase):
             action="public pleasant 2",
             periodicity=3,
             lead_time=90,
-            is_public=True
+            is_public=True,
         )
 
         PleasantHabit.objects.create(
@@ -275,7 +299,7 @@ class PublicHabitsListTestCase(APITestCase):
             action="private pleasant",
             periodicity=1,
             lead_time=30,
-            is_public=False
+            is_public=False,
         )
 
         self.public_useful_url = reverse("habits:public-useful-habits")
@@ -286,8 +310,8 @@ class PublicHabitsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        if 'results' in response_data:
-            results = response_data['results']
+        if "results" in response_data:
+            results = response_data["results"]
         else:
             results = response_data
 
@@ -301,8 +325,8 @@ class PublicHabitsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        if 'results' in response_data:
-            results = response_data['results']
+        if "results" in response_data:
+            results = response_data["results"]
         else:
             results = response_data
 
@@ -315,24 +339,26 @@ class PublicHabitsListTestCase(APITestCase):
 class PlaceAPITestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.client.force_authenticate(user=self.user)
 
-        self.other_user = CustomUser.objects.create_user(username="otheruser", password="otherpassword")
-
-        self.place = Place.objects.create(
-            name="test_place",
-            owner=self.user
+        self.other_user = CustomUser.objects.create_user(
+            username="otheruser", password="otherpassword"
         )
 
+        self.place = Place.objects.create(name="test_place", owner=self.user)
+
         self.other_place = Place.objects.create(
-            name="other_place",
-            owner=self.other_user
+            name="other_place", owner=self.other_user
         )
 
         self.create_url = reverse("habits:create-place")
         self.place_detail_url = reverse("habits:place", kwargs={"pk": self.place.id})
-        self.other_place_detail_url = reverse("habits:place", kwargs={"pk": self.other_place.id})
+        self.other_place_detail_url = reverse(
+            "habits:place", kwargs={"pk": self.other_place.id}
+        )
 
     def test_create_place(self):
         place_data = {"name": "new place"}
@@ -393,7 +419,9 @@ class PlaceAPITestCase(APITestCase):
 class UnauthorizedAccessTestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username="testuser", password="testpassword")
+        self.user = CustomUser.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.place = Place.objects.create(name="test_place", owner=self.user)
 
         self.useful_habit = UsefulHabit.objects.create(
@@ -404,7 +432,7 @@ class UnauthorizedAccessTestCase(APITestCase):
             periodicity=1,
             lead_time=100,
             is_public=True,
-            text_reward="test reward"
+            text_reward="test reward",
         )
 
     def test_unauthenticated_access_to_detail_endpoints(self):

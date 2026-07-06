@@ -11,4 +11,3 @@ class UserCreateAPIVew(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
-
