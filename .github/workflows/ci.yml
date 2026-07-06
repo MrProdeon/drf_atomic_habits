@@ -1,6 +1,6 @@
 name: CI GitHub Actions
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 
@@ -134,3 +134,59 @@ jobs:
           docker tag ${{ secrets.DOCKER_LOGIN }}/atomic_habits:${{ github.sha }} ${{ secrets.DOCKER_LOGIN }}/atomic_habits:latest
           docker push ${{ secrets.DOCKER_LOGIN }}/atomic_habits:${{ github.sha }}
           docker push ${{ secrets.DOCKER_LOGIN }}/atomic_habits:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+
+            if ! command -v docker compose &> /dev/null; then
+              sudo apt update
+              sudo apt install docker-compose-plugin -y
+            fi
+
+
+            cd /home/prodeon
+
+
+            sudo rm -rf drf_atomic_habits
+            
+            git clone -b feature/ci_cd https://github.com/MrProdeon/drf_atomic_habits.git
+            
+            cat > .env << 'EOF'
+                        SECRET_KEY=${{ secrets.SECRET_KEY }}
+                        DEBUG=False
+                        ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+                        DB_NAME=${{ secrets.DB_NAME }}
+                        DB_USER=${{ secrets.DB_USER }}
+                        DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+                        DB_HOST=db
+                        DB_PORT=5432
+                        POSTGRES_DB=${{ secrets.DB_NAME }}
+                        POSTGRES_USER=${{ secrets.DB_USER }}
+                        POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
+                        REDIS_HOST=redis
+                        REDIS_PORT=6379
+                        EOF
+            
+            cd drf_atomic_habits
+            
+            docker-compose down -v
+            sudo rm -rf postgres_data
+            docker volume rm drf_atomic_habits_postgres_data 2>/dev/null || true
+            docker volume rm drf_atomic_habits_redis_data 2>/dev/null || true
+
+
+            docker compose pull
+            docker compose up -d
+
+
+            docker compose ps
